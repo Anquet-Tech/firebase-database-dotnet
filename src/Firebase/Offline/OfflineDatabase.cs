@@ -42,6 +42,29 @@
                 .ToDictionary(o => o.Key, o => o);
         }
 
+        public OfflineDatabase(Type itemType, string filenameModifier, string parameters)
+        {
+            var fullName = this.GetFileName(itemType.ToString());
+            if(fullName.Length > 100)
+            {
+                fullName = fullName.Substring(0, 100);
+            }
+
+            BsonMapper mapper = BsonMapper.Global;
+            mapper.Entity<OfflineEntry>().Id(o => o.Key);
+
+            string root = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string filename = fullName + filenameModifier + ".db";
+            this.dbFilePath = Path.Combine(root, filename);
+
+            var connectionString = @"Filename={dbFilePath};"+parameters;
+
+            this.db = new LiteRepository(new LiteDatabase(connectionString, mapper));
+
+            this.cache = db.Database.GetCollection<OfflineEntry>().FindAll()
+                .ToDictionary(o => o.Key, o => o);
+        }
+
         /// <summary>
         /// Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.
         /// </summary>
