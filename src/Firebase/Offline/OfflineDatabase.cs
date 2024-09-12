@@ -57,7 +57,7 @@
             string filename = fullName + filenameModifier + ".db";
             this.dbFilePath = Path.Combine(root, filename);
 
-            var connectionString = @"Filename={dbFilePath};"+parameters;
+            var connectionString = $"Filename={dbFilePath};"+parameters;
 
             this.db = new LiteRepository(new LiteDatabase(connectionString, mapper));
 
